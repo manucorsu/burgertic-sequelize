@@ -1,37 +1,30 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../db.js";
 
-export class Plato extends Model {}
+export class PlatoPedido extends Model {}
 
-Plato.init(
+PlatoPedido.init(
   {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
-    tipo: {
-      type: DataTypes.STRING,
+    idPedido: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
-    nombre: {
-      type: DataTypes.STRING,
+    idPlato: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
-    precio: {
-      type: DataTypes.FLOAT,
+    cantidad: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-    },
-    descripcion: {
-      type: DataTypes.STRING,
-      allowNull: true,
     },
   },
   {
-    sequelize,
-    modelName: "platos",
+    modelName: "platosPedido",
     timestamps: false,
   }
 );
-
-Plato.belongsTo()
