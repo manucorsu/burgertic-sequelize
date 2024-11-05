@@ -1,0 +1,2 @@
+# burgertic-sequelize
+ 
