@@ -33,5 +33,3 @@ Plato.init(
     timestamps: false,
   }
 );
-
-Plato.belongsTo()
