@@ -11,6 +11,8 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+await defineModels();
+
 app.get("/", (_, res) => res.send("BurgerTIC API is running..."));
 
 app.use("/platos", PlatosRouter);
@@ -20,4 +22,3 @@ app.use("/pedidos", PedidosRouter);
 app.listen(process.env.PORT || 9000, () =>
     console.log(`Server is running on port ${process.env.PORT || 9000}`)
 );
-await defineModels();
