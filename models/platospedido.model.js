@@ -24,6 +24,7 @@ PlatosPedido.init(
     },
   },
   {
+    sequelize,
     modelName: "platosPedido",
     timestamps: false,
   }

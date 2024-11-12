@@ -1,4 +1,4 @@
-import { Plato } from "../models/platos.model.js";
+import { Plato } from "../models/plato.model.js";
 
 const getPlatos = async () => await Plato.findAll();
 

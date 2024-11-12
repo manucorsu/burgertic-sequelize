@@ -1,12 +1,13 @@
-import { sequelize } from "../db";
-import { Pedido } from "./pedidos.model";
-import { Plato } from "./platos.model";
-import { PlatosPedido } from "./platospedido.model";
-import { Usuario } from "./usuarios.model";
+import { sequelize } from "../db.js";
+import { Pedido } from "./pedido.model.js";
+import { Plato } from "./plato.model.js";
+import { PlatosPedido } from "./platospedido.model.js";
+import { Usuario } from "./usuario.model.js";
 
-Pedido.hasMany(Plato);
-Plato.belongsToMany(Pedido, { through: PlatosPedido });
-Usuario.hasMany(Pedido);
-Pedido.belongsTo(Usuario);
-
-await sequelize.sync({ force: true });
+export const defineModels = async () => {
+  Pedido.hasMany(Plato);
+  Plato.belongsToMany(Pedido, { through: PlatosPedido });
+  Usuario.hasMany(Pedido);
+  Pedido.belongsTo(Usuario);
+  await sequelize.sync({ force: true, alter: true });
+};
