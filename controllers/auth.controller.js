@@ -21,6 +21,16 @@ const register = async (req, res) => {
     if (usuario2)
         return res.status(400).json({ message: "Email ya registrado" });
 
+    if(nombre.length > 60){
+        return res.status(400).json({message: "El nombre es demasiado largo."});
+    }
+    if(apellido.length > 60){
+        return res.status(400).json({message: "El apellido es demasiado largo."});
+    }
+    if(email.length > 256){
+        return res.status(400).json({message: "El email es demasiado largo."});
+    }
+
     const hash = await bcrypt.hash(usuario.password, 10);
 
     try {
