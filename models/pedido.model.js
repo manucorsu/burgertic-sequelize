@@ -10,10 +10,6 @@ Pedido.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    idUsuario: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     fecha: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -25,7 +21,7 @@ Pedido.init(
   },
   {
     sequelize,
-    modelName: "platos",
+    modelName: "pedidos",
     timestamps: false,
   }
 );

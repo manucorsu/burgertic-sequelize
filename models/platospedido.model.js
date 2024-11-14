@@ -10,14 +10,6 @@ PlatosPedido.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    idPedido: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    idPlato: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     cantidad: {
       type: DataTypes.INTEGER,
       allowNull: false,

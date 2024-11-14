@@ -5,7 +5,7 @@ import { PlatosPedido } from "./platospedido.model.js";
 import { Usuario } from "./usuario.model.js";
 
 export const defineModels = async () => {
-  Pedido.hasMany(Plato);
+  Pedido.belongsToMany(Plato, {through: PlatosPedido})
   Plato.belongsToMany(Pedido, { through: PlatosPedido });
   Usuario.hasMany(Pedido);
   Pedido.belongsTo(Usuario);
