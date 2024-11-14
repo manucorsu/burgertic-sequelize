@@ -1,6 +1,3 @@
-import { config } from "../db.js";
-import pkg from "pg";
-const { Client } = pkg;
 import { Usuario } from "../models/usuario.model.js";
 
 const getUsuarioByEmail = async (email) => {
@@ -9,18 +6,18 @@ const getUsuarioByEmail = async (email) => {
 };
 
 const getUsuarioById = async (id) => {
-    const usersWithId = await Usuario.findAll({where:{id: id}})
-    return usersWithId[0];
+  const usersWithId = await Usuario.findAll({ where: { id: id } });
+  return usersWithId[0];
 };
 
 const createUsuario = async (usuario) => {
-    await Usuario.create({
-        nombre: usuario.nombre,
-        apellido: usuario.apellido,
-        email: usuario.email,
-        password: usuario.password,
-        admin: false
-    });
+  return await Usuario.create({
+    nombre: usuario.nombre,
+    apellido: usuario.apellido,
+    email: usuario.email,
+    password: usuario.password,
+    admin: false,
+  });
 };
 
 export default { getUsuarioByEmail, getUsuarioById, createUsuario };
