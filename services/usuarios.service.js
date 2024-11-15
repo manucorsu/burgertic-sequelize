@@ -6,8 +6,8 @@ const getUsuarioByEmail = async (email) => {
 };
 
 const getUsuarioById = async (id) => {
-  const usersWithId = await Usuario.findAll({ where: { id: id } });
-  return usersWithId[0];
+  if (Number.isNaN(id)) throw new TypeError("el id debe ser un número");
+  return await Usuario.findByPk(id);
 };
 
 const createUsuario = async (usuario) => {

@@ -4,6 +4,7 @@ const { Client } = pkg;
 import { Pedido } from "../models/pedido.model.js";
 import { Plato } from "../models/plato.model.js";
 import { PlatosPedido } from "../models/platospedido.model.js";
+import { Usuario } from "../models/usuario.model.js";
 
 const getPlatosByPedido = async (idPedido) => {
   const client = new Client(config);
@@ -69,12 +70,8 @@ const getPedidos = async () => {
 };
 
 const getPedidoById = async (id) => {
-  const p = await Pedido.findAll({
-    where: {
-      id: id,
-    },
-  });
-  return p[0];
+  if(Number.isNaN(id)) throw new TypeError("El id debe ser un número.");
+  else return await Pedido.findByPk(id);
 };
 
 const getPedidosByUser = async (idUsuario) => {
@@ -108,28 +105,25 @@ const getPedidosByUser = async (idUsuario) => {
 };
 
 const createPedido = async (idUsuario, platos) => {
-  const pedido = await Pedido.create({
-    fecha: new Date(),
-    estado: "pendiente",
-    userId: id,
-  });
+  if(Number.isNaN(idUsuario)) throw new TypeError("idUsuario debe ser un número.");
+  if(!Usuario.findByPk(idUsuario)) throw new Error(`No se encontró un usuario con el id ${id}`);
 
-  for (const plato of platos) {
-    if (!plato.id || !plato.cantidad) {
-      await pedido.destroy();
-      throw new Error("Todos los platos deben tener id y cantidad");
-    }
-    const platosdb = await Plato.findAll({
-      where: { id: plato.id },
-    });
-    const platodb = platosdb[0];
-
-    if (platodb === null) {
-      await pedido.destroy();
-      throw new Error("Uno de los platos pasados es inválido");
-    } else
-      await PlatosPedido.create({ id: plato.id, cantidad: plato.cantidad });
+  const platosdb = []
+  for(const p of platos){
+    const platodb = await Plato.findByPk(p.id);
+    if(!platodb) throw new Error("Por lo menos de uno los platos no existe en la base de datos.");
+    else platosdb.push(platodb);
   }
+
+//todo
+  // await Pedido.create(
+  //   {
+  //     fecha: new Date(),
+  //     estado: "pendiente",
+  //     userId: idUsuario
+  //   },
+  //   { include: [Plato, Usuario] }
+  // );
 };
 
 const updatePedido = async (id, estado) => {

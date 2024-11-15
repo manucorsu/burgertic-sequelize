@@ -3,12 +3,6 @@ import { Pedido } from "./pedido.model.js";
 import { Plato } from "./plato.model.js";
 import { PlatosPedido } from "./platospedido.model.js";
 import { Usuario } from "./usuario.model.js";
-import readline from "node:readline";
-
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
 
 export const defineModels = async (forceAndAlter = false) => {
   if (typeof forceAndAlter !== "boolean") {
