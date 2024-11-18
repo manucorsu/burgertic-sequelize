@@ -1,3 +1,4 @@
+import NotFoundError from "../errors/notfound.error.js";
 import PedidosService from "../services/pedidos.service.js";
 
 const getPedidos = async (req, res) => {
@@ -14,7 +15,9 @@ const getPedidosByUser = async (req, res) => {
     const pedidos = await PedidosService.getPedidosByUser(req.idUsuario);
     res.json(pedidos);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    let s = 500;
+    if(error instanceof NotFoundError) s = 404;
+    res.status(s).json({ message: error.message });
   }
 };
 
@@ -52,9 +55,12 @@ const createPedido = async (req, res) => {
 
   try {
     await PedidosService.createPedido(req.idUsuario, platos);
-    res.json({ message: "Pedido creado con éxito" });
+    res.status(201).json({ message: "Pedido creado con éxito" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    let s = 500;
+    if(error instanceof NotFoundError) s = 404;
+    else console.error(error);
+    res.status(s).json({ message: error.message });
   }
 };
 
@@ -72,7 +78,10 @@ const aceptarPedido = async (req, res) => {
     await PedidosService.updatePedido(id, "aceptado");
     res.json({ message: "Pedido aceptado" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    let s = 500;
+    if(error instanceof NotFoundError) s = 404;
+    else console.error(error);
+    res.status(s).json({ message: error.message });
   }
 };
 
@@ -90,8 +99,10 @@ const comenzarPedido = async (req, res) => {
     await PedidosService.updatePedido(id, "en camino");
     res.json({ message: "Pedido comenzado" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+    let s = 500;
+    if(error instanceof NotFoundError) s = 404;
+    else console.error(error);
+    res.status(s).json({ message: error.message });  }
 };
 
 const entregarPedido = async (req, res) => {
@@ -108,7 +119,10 @@ const entregarPedido = async (req, res) => {
     await PedidosService.updatePedido(id, "entregado");
     res.json({ message: "Pedido entregado" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    let s = 500;
+    if(error instanceof NotFoundError) s = 404;
+    else console.error(error);
+    res.status(s).json({ message: error.message });
   }
 };
 
@@ -125,7 +139,10 @@ const deletePedido = async (req, res) => {
     await PedidosService.deletePedido(id);
     res.json({ message: "Pedido eliminado" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    let s = 500;
+    if(error instanceof NotFoundError) s = 404;
+    else console.error(error);
+    res.status(s).json({ message: error.message });
   }
 };
 

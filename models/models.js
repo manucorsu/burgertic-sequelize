@@ -4,13 +4,13 @@ import { Plato } from "./plato.model.js";
 import { PlatosPedido } from "./platospedido.model.js";
 import { Usuario } from "./usuario.model.js";
 
-export const defineModels = async (forceAndAlter, generatePlatos) => {
+export const defineModels = async (forceAndAlter = false) => {
   if (typeof forceAndAlter !== "boolean") {
     throw new Error("forceAndAlter debe ser un bool");
   }
 
-  if (typeof generatePlatos !== "boolean") {
-    throw new Error("generatePlatos debe ser un bool");
+  if(forceAndAlter){
+    console.warn("Se eliminarán todos los registros de la base de datos (también se van a insertar todos los platos que estaban en burgertic.sql)");
   }
 
   Pedido.belongsToMany(Plato, { through: PlatosPedido });
@@ -20,7 +20,7 @@ export const defineModels = async (forceAndAlter, generatePlatos) => {
 
   await sequelize.sync({ force: forceAndAlter, alter: forceAndAlter });
 
-  if (generatePlatos) {
+  if (forceAndAlter) {
     await Plato.bulkCreate([
       //https://chatgpt.com/share/673a6800-fee0-8010-a64d-77027d8e81ce
       {
