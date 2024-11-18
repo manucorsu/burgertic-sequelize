@@ -1,12 +1,10 @@
 import { Usuario } from "../models/usuario.model.js";
 
 const getUsuarioByEmail = async (email) => {
-  const usersWithEmail = await Usuario.findAll({ where: { email: email } });
-  return usersWithEmail[0];
+  return await Usuario.findOne({ where: { email: email } });
 };
 
 const getUsuarioById = async (id) => {
-  if (Number.isNaN(id)) throw new TypeError("el id debe ser un número");
   return await Usuario.findByPk(id);
 };
 

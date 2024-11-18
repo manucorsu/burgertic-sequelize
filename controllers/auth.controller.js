@@ -44,7 +44,7 @@ const login = async (req, res) => {
 
   const usuario = await UsuariosService.getUsuarioByEmail(email);
 
-  if (!usuario) return res.status(400).json({ message: "Usuario no encontrado" });
+  if (!usuario) return res.status(404).json({ message: "Usuario no encontrado" });
 
   const passwordMatch = await bcrypt.compare(password, usuario.password);
 

@@ -11,7 +11,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-await defineModels();
+await defineModels(false, false);
 
 app.get("/", (_, res) => res.send("BurgerTIC API is running..."));
 
