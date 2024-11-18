@@ -16,7 +16,8 @@ const getPedidosByUser = async (req, res) => {
     res.json(pedidos);
   } catch (error) {
     let s = 500;
-    if(error instanceof NotFoundError) s = 404;
+    if (error instanceof NotFoundError) s = 404;
+    else console.error(error);
     res.status(s).json({ message: error.message });
   }
 };
@@ -31,7 +32,10 @@ const getPedidoById = async (req, res) => {
     if (!pedido) return res.status(404).json({ message: "Pedido no encontrado" });
     res.json(pedido);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    let s = 500;
+    if (error instanceof NotFoundError) s = 404;
+    else console.error(error);
+    res.status(s).json({ message: error.message });
   }
 };
 
@@ -58,7 +62,7 @@ const createPedido = async (req, res) => {
     res.status(201).json({ message: "Pedido creado con éxito" });
   } catch (error) {
     let s = 500;
-    if(error instanceof NotFoundError) s = 404;
+    if (error instanceof NotFoundError) s = 404;
     else console.error(error);
     res.status(s).json({ message: error.message });
   }
@@ -73,13 +77,16 @@ const aceptarPedido = async (req, res) => {
     const pedido = await PedidosService.getPedidoById(id);
 
     if (!pedido) return res.status(404).json({ message: "Pedido no encontrado" });
-    if (pedido.estado !== "pendiente") return res.status(400).json({ message: "El pedido no está pendiente" });
+    if (pedido.estado !== "pendiente")
+      return res.status(400).json({
+        message: `El estado del pedido es '${pedido.estado}'. Solo se pueden aceptar pedidos marcados como 'pendiente'.`,
+      });
 
     await PedidosService.updatePedido(id, "aceptado");
     res.json({ message: "Pedido aceptado" });
   } catch (error) {
     let s = 500;
-    if(error instanceof NotFoundError) s = 404;
+    if (error instanceof NotFoundError) s = 404;
     else console.error(error);
     res.status(s).json({ message: error.message });
   }
@@ -94,15 +101,19 @@ const comenzarPedido = async (req, res) => {
     const pedido = await PedidosService.getPedidoById(id);
 
     if (!pedido) return res.status(404).json({ message: "Pedido no encontrado" });
-    if (pedido.estado !== "aceptado") return res.status(400).json({ message: "El pedido no está aceptado" });
+    if (pedido.estado !== "aceptado")
+      return res.status(400).json({
+        message: `El estado del pedido es '${pedido.estado}'. Solo se pueden comenzar pedidos marcados como 'aceptado'.`,
+      });
 
     await PedidosService.updatePedido(id, "en camino");
     res.json({ message: "Pedido comenzado" });
   } catch (error) {
     let s = 500;
-    if(error instanceof NotFoundError) s = 404;
+    if (error instanceof NotFoundError) s = 404;
     else console.error(error);
-    res.status(s).json({ message: error.message });  }
+    res.status(s).json({ message: error.message });
+  }
 };
 
 const entregarPedido = async (req, res) => {
@@ -114,34 +125,38 @@ const entregarPedido = async (req, res) => {
     const pedido = await PedidosService.getPedidoById(id);
 
     if (!pedido) return res.status(404).json({ message: "Pedido no encontrado" });
-    if (pedido.estado !== "en camino") return res.status(400).json({ message: "El pedido no está en camino" });
+    if (pedido.estado !== "en camino")
+      return res.status(400).json({
+        message: `El estado del pedido es '${pedido.estado}'. Solo se pueden entregar pedidos marcados como 'en camino'.`,
+      });
 
     await PedidosService.updatePedido(id, "entregado");
     res.json({ message: "Pedido entregado" });
   } catch (error) {
     let s = 500;
-    if(error instanceof NotFoundError) s = 404;
+    if (error instanceof NotFoundError) s = 404;
     else console.error(error);
     res.status(s).json({ message: error.message });
   }
 };
 
 const deletePedido = async (req, res) => {
-  const { id } = req.params;
-
-  if (!id) return res.status(400).json({ message: "Se necesita un ID" });
-
-  const pedido = await PedidosService.getPedidoById(id);
-
-  if (!pedido) return res.status(404).json({ message: "Pedido no encontrado" });
-
   try {
+    const { id } = req.params;
+
+    if (!id) return res.status(400).json({ message: "Se necesita un ID" });
+
+    const pedido = await PedidosService.getPedidoById(id);
+    if (!pedido) return res.status(404).json({ message: "Pedido no encontrado" });
+
     await PedidosService.deletePedido(id);
     res.json({ message: "Pedido eliminado" });
   } catch (error) {
     let s = 500;
-    if(error instanceof NotFoundError) s = 404;
-    else console.error(error);
+    if (error instanceof NotFoundError) {
+      console.log(404);
+      s = 404;
+    } else console.error(error);
     res.status(s).json({ message: error.message });
   }
 };

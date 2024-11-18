@@ -1,6 +1,3 @@
-import { config } from "../db.js";
-import pkg from "pg";
-const { Client } = pkg;
 import { Pedido } from "../models/pedido.model.js";
 import PlatosService from "./platos.service.js";
 import NotFoundError from "../errors/notfound.error.js";
@@ -8,38 +5,54 @@ import UsuariosService from "./usuarios.service.js";
 import { PlatosPedido } from "../models/platospedido.model.js";
 
 const getPlatosByPedido = async (idPedido) => {
-  const client = new Client(config);
-  await client.connect();
+  const pedido = await Pedido.findByPk(idPedido);
+  if (!pedido) throw new NotFoundError(`No se encontró un pedido con el id ${id}`);
 
-  try {
-    const { rows } = await client.query("SELECT * FROM pedidos_platos WHERE id_pedido = $1", [idPedido]);
+  const platosPedido = await PlatosPedido.findAll({ where: { pedidoId: idPedido } });
+  const result = [];
+  for (const pp of platosPedido) {
+    const plato = await PlatosService.getPlatoById(pp.platoId);
+    if (!plato) throw new Error(`El pedido tenía un plato que no existe (plato con id ${resultItem.id})`);
 
-    if (rows.length < 1) throw new Error("Pedido no encontrado");
-
-    const result = await Promise.all(
-      rows.map(async (plato) => {
-        const { rows } = await client.query("SELECT * FROM platos WHERE id = $1", [plato.id_plato]);
-
-        if (rows.length < 1) throw new Error("Plato no encontrado");
-
-        return {
-          ...rows[0],
-          cantidad: plato.cantidad,
-        };
-      })
-    );
-
-    await client.end();
-    return result;
-  } catch (error) {
-    await client.end();
-    throw error;
+    const resultItem = {
+      id: plato.id,
+      cantidad: pp.cantidad,
+    };
+    result.push(resultItem);
   }
+
+  return result;
 };
 
-const getPedidos = async () => await Pedido.findAll();
+const getPedidos = async () => {
+  const pedidos = await Pedido.findAll();
 
-const getPedidoById = async (id) => await Pedido.findByPk(id);
+  const result = [];
+  for (const pedido of pedidos) {
+    result.push({
+      id: pedido.id,
+      idUsuario: pedido.userId,
+      fecha: pedido.fecha,
+      estado: pedido.estado,
+      platos: await getPlatosByPedido(pedido.id),
+    });
+  }
+
+  return result;
+};
+
+const getPedidoById = async (id) => {
+  const pedido = await Pedido.findByPk(id);
+  if (!pedido) throw new NotFoundError(`No existe un pedido con id ${id}`);
+
+  return {
+    id: pedido.id,
+    idUsuario: pedido.userId,
+    fecha: pedido.fecha,
+    estado: pedido.estado,
+    platos: await getPlatosByPedido(pedido.id),
+  };
+};
 
 const getPedidosByUser = async (idUsuario) => {
   return await Pedido.findAll({ where: { userId: idUsuario } });
@@ -78,33 +91,18 @@ const createPedido = async (idUsuario, platos) => {
 const updatePedido = async (id, estado) => {
   if (estado !== "aceptado" && estado !== "en camino" && estado !== "entregado") throw new Error("Estado inválido");
 
-  const client = new Client(config);
-  await client.connect();
+  const pedido = await Pedido.findByPk(id);
+  if(!pedido) throw new NotFoundError(`No se encontró un pedido con id ${id}`);
 
-  try {
-    const { rows } = await client.query("UPDATE pedidos SET estado = $1 WHERE id = $2", [estado, id]);
-
-    await client.end();
-    return rows;
-  } catch (error) {
-    await client.end();
-    throw error;
-  }
+  pedido.estado = estado;
+  await pedido.save();
 };
 
 const deletePedido = async (id) => {
-  const client = new Client(config);
-  await client.connect();
+  const pedido = await Pedido.findByPk(id);
+  if(!pedido) throw new NotFoundError(`No se encontró un pedido con id ${id}`);
 
-  try {
-    const { rows } = await client.query("DELETE FROM pedidos WHERE id = $1", [id]);
-
-    await client.end();
-    return rows;
-  } catch (error) {
-    await client.end();
-    throw error;
-  }
+  await pedido.destroy();
 };
 
 export default {
