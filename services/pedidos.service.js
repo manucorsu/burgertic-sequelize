@@ -55,7 +55,19 @@ const getPedidoById = async (id) => {
 };
 
 const getPedidosByUser = async (idUsuario) => {
-  return await Pedido.findAll({ where: { userId: idUsuario } });
+  const pedidos = await Pedido.findAll({ where: { userId: idUsuario } });
+
+  const result = [];
+  for (const pedido of pedidos) {
+    result.push({
+      id: pedido.id,
+      idUsuario: pedido.userId,
+      fecha: pedido.fecha,
+      estado: pedido.estado,
+      platos: await getPlatosByPedido(pedido.id),
+    });
+  }
+  return result;
 };
 
 const createPedido = async (idUsuario, platos) => {
@@ -92,7 +104,7 @@ const updatePedido = async (id, estado) => {
   if (estado !== "aceptado" && estado !== "en camino" && estado !== "entregado") throw new Error("Estado inválido");
 
   const pedido = await Pedido.findByPk(id);
-  if(!pedido) throw new NotFoundError(`No se encontró un pedido con id ${id}`);
+  if (!pedido) throw new NotFoundError(`No se encontró un pedido con id ${id}`);
 
   pedido.estado = estado;
   await pedido.save();
@@ -100,7 +112,7 @@ const updatePedido = async (id, estado) => {
 
 const deletePedido = async (id) => {
   const pedido = await Pedido.findByPk(id);
-  if(!pedido) throw new NotFoundError(`No se encontró un pedido con id ${id}`);
+  if (!pedido) throw new NotFoundError(`No se encontró un pedido con id ${id}`);
 
   await pedido.destroy();
 };
