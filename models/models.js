@@ -1,16 +1,21 @@
 import { sequelize } from "../db.js";
+import usuariosService from "../services/usuarios.service.js";
 import { Pedido } from "./pedido.model.js";
 import { Plato } from "./plato.model.js";
 import { PlatosPedido } from "./platospedido.model.js";
 import { Usuario } from "./usuario.model.js";
+import bcrypt from "bcryptjs";
+import "dotenv/config";
 
 export const defineModels = async (forceAndAlter = false) => {
   if (typeof forceAndAlter !== "boolean") {
     throw new Error("forceAndAlter debe ser un bool");
   }
 
-  if(forceAndAlter){
-    console.warn("Se eliminarán todos los registros de la base de datos (también se van a insertar todos los platos que estaban en burgertic.sql)");
+  if (forceAndAlter) {
+    console.warn(
+      "Se eliminarán todos los registros de la base de datos (también se van a insertar todos los platos que estaban en burgertic.sql)"
+    );
   }
 
   Pedido.belongsToMany(Plato, { through: PlatosPedido });
@@ -145,7 +150,16 @@ export const defineModels = async (forceAndAlter = false) => {
         precio: 1500,
         descripcion: "Torta Irresistible de Chocolate. Es la mejor elección sobre todo si estás en 2do.",
       },
-    
     ]);
+
+
+    const adm = await usuariosService.createUsuario({
+      nombre: "admin",
+      apellido: "admin",
+      email: "admin@burgertic.com.ar",
+      password: await bcrypt.hash(process.env.ADMIN_PWD, 10),
+    });
+    adm.admin = true;
+    await adm.save();
   }
 };

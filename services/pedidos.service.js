@@ -31,7 +31,7 @@ const getPedidos = async () => {
   for (const pedido of pedidos) {
     result.push({
       id: pedido.id,
-      idUsuario: pedido.userId,
+      id_usuario: pedido.userId,
       fecha: pedido.fecha,
       estado: pedido.estado,
       platos: await getPlatosByPedido(pedido.id),
@@ -47,7 +47,7 @@ const getPedidoById = async (id) => {
 
   return {
     id: pedido.id,
-    idUsuario: pedido.userId,
+    id_usuario: pedido.userId,
     fecha: pedido.fecha,
     estado: pedido.estado,
     platos: await getPlatosByPedido(pedido.id),
@@ -61,7 +61,7 @@ const getPedidosByUser = async (idUsuario) => {
   for (const pedido of pedidos) {
     result.push({
       id: pedido.id,
-      idUsuario: pedido.userId,
+      id_usuario: pedido.userId,
       fecha: pedido.fecha,
       estado: pedido.estado,
       platos: await getPlatosByPedido(pedido.id),
