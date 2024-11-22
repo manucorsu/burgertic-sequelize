@@ -16,6 +16,7 @@ export const defineModels = async (forceAndAlter = false) => {
     console.warn(
       "Se eliminarán todos los registros de la base de datos (también se van a insertar todos los platos que estaban en burgertic.sql)"
     );
+    await new Promise(resolve => setTimeout(resolve, 1500));
   }
 
   Pedido.belongsToMany(Plato, { through: PlatosPedido });
