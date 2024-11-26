@@ -1,10 +1,10 @@
 import { sequelize } from "../db.js";
-//import usuariosService from "../services/usuarios.service.js";
+import usuariosService from "../services/usuarios.service.js";
 import { Pedido } from "./pedido.model.js";
 import { Plato } from "./plato.model.js";
 import { PlatosPedido } from "./platospedido.model.js";
 import { Usuario } from "./usuario.model.js";
-//import bcrypt from "bcryptjs";
+import bcrypt from "bcryptjs";
 import "dotenv/config";
 
 export const defineModels = async (forceAndAlter = false) => {
@@ -153,13 +153,13 @@ export const defineModels = async (forceAndAlter = false) => {
       },
     ]);
 
-    // const adm = await usuariosService.createUsuario({
-    //   nombre: "admin",
-    //   apellido: "admin",
-    //   email: "admin@burgertic.com.ar",
-    //   password: await bcrypt.hash(process.env.ADMIN_PWD, 10),
-    // });
-    // adm.admin = true;
-    // await adm.save();
+    const adm = await usuariosService.createUsuario({
+      nombre: "admin",
+      apellido: "admin",
+      email: "admin@burgertic.com.ar",
+      password: await bcrypt.hash(process.env.ADMIN_PWD, 10),
+    });
+    adm.admin = true;
+    await adm.save();
   }
 };
